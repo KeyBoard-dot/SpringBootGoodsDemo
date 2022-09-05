@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.springbootgoodsdemo.mapper.GoodsMapper">
+  <resultMap id="BaseResultMap" type="com.example.springbootgoodsdemo.entity.Goods">
+    <id column="gid" jdbcType="INTEGER" property="gid" />
+    <result column="gname" jdbcType="VARCHAR" property="gname" />
+    <result column="gimg" jdbcType="VARCHAR" property="gimg" />
+    <result column="gprice" jdbcType="DECIMAL" property="gprice" />
+    <result column="gstock" jdbcType="INTEGER" property="gstock" />
+    <result column="maintainDate" jdbcType="TIMESTAMP" property="maintaindate" />
+    <result column="classify" jdbcType="VARCHAR" property="classify" />
+    <result column="gdescribe" jdbcType="LONGVARCHAR" property="gdescribe" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from goods
+    where gid = #{gid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.springbootgoodsdemo.entity.Goods">
+    insert into goods (gid, gname, gimg,
+      gprice, gstock, maintainDate,
+      classify, gdescribe)
+    values (#{gid,jdbcType=INTEGER}, #{gname,jdbcType=VARCHAR}, #{gimg,jdbcType=VARCHAR},
+      #{gprice,jdbcType=DECIMAL}, #{gstock,jdbcType=INTEGER}, #{maintaindate,jdbcType=TIMESTAMP},
+      #{classify,jdbcType=VARCHAR}, #{gdescribe,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.example.springbootgoodsdemo.entity.Goods">
+    update goods
+    set gname = #{gname,jdbcType=VARCHAR},
+      gimg = #{gimg,jdbcType=VARCHAR},
+      gprice = #{gprice,jdbcType=DECIMAL},
+      gstock = #{gstock,jdbcType=INTEGER},
+      maintainDate = #{maintaindate,jdbcType=TIMESTAMP},
+      classify = #{classify,jdbcType=VARCHAR},
+      gdescribe = #{gdescribe,jdbcType=LONGVARCHAR}
+    where gid = #{gid,jdbcType=INTEGER}
+  </update>
+
+  <sql id="selectHead">
+    select gid, gname, gimg, gprice, gstock, maintainDate, classify, gdescribe
+    from goods
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <include refid="selectHead"></include>
+    where gid = #{gid,jdbcType=INTEGER}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    <include refid="selectHead"></include>
+  </select>
+
+  <select id="findGoodsByParam" parameterType="com.example.springbootgoodsdemo.vo.SearchVo" resultMap="BaseResultMap">
+    <include refid="selectHead"></include>
+      <where >
+        <if test="gname != null and gname != ''">
+            gname like '%${gname}%'
+        </if>
+        <if test="gprice != null and gprice != 0">
+            and gprice &lt;= ${gprice}
+        </if>
+        <if test="maintainDate != null and maintainDate != ''">
+            and maintainDate = #{maintainDate}
+        </if>
+        <if test="classify != null and classify != ''">
+            and classify = #{classify}
+        </if>
+      </where>
+  </select>
+</mapper>
